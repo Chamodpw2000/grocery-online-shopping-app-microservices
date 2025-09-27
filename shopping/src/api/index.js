@@ -1,5 +1,6 @@
 
 module.exports = {
 
-    shopping: require('./shopping')
+    shopping: require('./shopping'),
+    appEvents: require('./app-events')
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const cors  = require('cors');
-const { shopping } = require('./api');
+const { shopping, appEvents } = require('./api');
 const HandleErrors = require('./utils/error-handler')
 
 
@@ -14,6 +14,7 @@ module.exports = async (app) => {
     //api
 
     shopping(app);
+    appEvents(app);
 
     // error handling
     app.use(HandleErrors);

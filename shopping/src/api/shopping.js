@@ -13,10 +13,17 @@ module.exports = (app) => {
         const { txnNumber } = req.body;
 
 
+
         try {
             const { data } = await service.PlaceOrder({_id, txnNumber});
 
+            
+
             const payload = await service.GetOrderPayload(_id, data, "CREATE_ORDER");
+
+
+            
+            
 
           PublishCustomerEvent(payload);
 

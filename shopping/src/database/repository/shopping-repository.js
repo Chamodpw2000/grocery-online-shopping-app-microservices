@@ -1,6 +1,6 @@
 const { OrderModel, CartModel } = require('../models');
 const { v4: uuidv4 } = require('uuid');
-const { APIError, BadRequestError } = require('../../utils/app-errors')
+const { APIError} = require('../../utils/app-errors')
 
 
 //Dealing with data base operations
@@ -35,7 +35,12 @@ class ShoppingRepository {
 
 
     async AddCartItem(customerId, item, qty, isRemove) {
+
+
         try {
+            
+
+
             const cart = await CartModel.findOne({ customerId: customerId })
             const { _id } = item;
 
@@ -43,7 +48,9 @@ class ShoppingRepository {
             if (cart) {
 
                 let isExist = false;
-                let cartItems = cart.itemss
+                let cartItems = cart.items
+         
+                
 
 
                 if (cartItems.length > 0) {
@@ -77,7 +84,8 @@ class ShoppingRepository {
         }
 
         catch (err) {
-            throw APIError("API Error", STATUS_CODES.INTERNAL_ERROR, "Unable to create customer");
+           console.log(err);
+           
         }
     }
            

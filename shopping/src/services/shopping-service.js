@@ -23,7 +23,9 @@ class ShoppingService {
 
 
   async PlaceOrder(userInput) {
-    const { _id, txnNumber } = userInput; i
+    const { _id, txnNumber } = userInput;
+
+
 
     // Verify the txn number with payment logs
 
@@ -75,28 +77,28 @@ class ShoppingService {
     }
   }
 
-  async GetOrderPayload(userId ,order, event) {
+  async GetOrderPayload(userId, order, event) {
 
-    if(order){
+    if (order) {
       const payload = {
-        event:event,
-        data:{
-          userId:userId,
-          order:{ userId ,order}
-        
+        event: event,
+        data: {
+          userId: userId,
+          order: { userId, order }
+
         }
       }
 
-        return FormateData(payload);
-      }else {
-        return FormateData({error:"Order not found"});
-      }
+      return payload;
+    } else {
+      return FormateData({ error: "Order not found" });
     }
+  }
 
 
 
 
-  
+
 
 
 
