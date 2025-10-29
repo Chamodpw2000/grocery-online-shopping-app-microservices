@@ -1,10 +1,10 @@
 const { CUSTOMER_BINDING_KEY, SHOPPING_BINDING_KEY } = require('../config');
 const ProductService = require('../services/product-service');
-const {PublishMessage } = require('../utils');
+const { PublishMessage } = require('../utils');
 
 const UserAuth = require('./middlewares/auth')
 
-module.exports = (app , channel) => {
+module.exports = (app, channel) => {
 
     const service = new ProductService();
 
@@ -66,7 +66,7 @@ module.exports = (app , channel) => {
     });
 
     app.put('/wishlist', UserAuth, async (req, res, next) => {
-      
+
 
 
         const { _id } = req.user;
@@ -100,7 +100,7 @@ module.exports = (app , channel) => {
 
             const { data } = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
             // PublishCustomerEvent(data);
-       PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
             return res.status(200).json(data.data.product);
         } catch (err) {
             next(err)
@@ -110,22 +110,22 @@ module.exports = (app , channel) => {
 
     app.put('/cart', UserAuth, async (req, res, next) => {
 
-       
+
 
 
         const { _id } = req.user;
 
-     
+
 
 
         try {
 
             const { data } = await service.GetProductPayload(_id, { productId: req.body._id, qty: req.body.qty }, 'ADD_TO_CART');
-       
+
 
 
             // PublishShoppingEvent(data);
-         PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
             // PublishCustomerEvent(data);
             PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
 
@@ -138,7 +138,7 @@ module.exports = (app , channel) => {
         } catch (err) {
 
 
-            console.log("error caught in api",err);
+            console.log("error caught in api", err);
 
         }
     });
