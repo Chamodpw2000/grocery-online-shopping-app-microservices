@@ -143,36 +143,47 @@ class CustomerService {
     }
 
     async SubscribeEvents(payload) {
+        try {
+            // payload may be a JSON string or an already-parsed object
+            const parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;
 
-        payload = JSON.parse(payload);
-        
+            if (!parsed || typeof parsed !== 'object') {
+                console.warn('[CustomerService] Ignoring non-object payload:', payload);
+                return;
+            }
 
-        const { event, data } = payload;
+            const { event, data } = parsed;
 
-        const { userId, product, order, qty } = data;
+            if (!event || !data || typeof data !== 'object') {
+                console.warn('[CustomerService] Ignoring message without event/data:', parsed);
+                return;
+            }
 
+            const { userId, product, order, qty } = data;
 
-
-
-        switch (event) {
-            case 'ADD_TO_WISHLIST':
-            case 'REMOVE_FROM_WISHLIST':
-                this.AddToWishlist(userId, product)
-                break;
-            case 'ADD_TO_CART':
-                this.ManageCart(userId, product, qty, false);
-                break;
-            case 'REMOVE_FROM_CART':
-                this.ManageCart(userId, product, qty, true);
-                break;
-            case 'CREATE_ORDER':       
-                this.ManageOrder(userId, order);
-                break;
-            case 'TEST':
-                console.log("Subscriber working");
-                break;
-            default:
-                break;
+            switch (event) {
+                case 'ADD_TO_WISHLIST':
+                case 'REMOVE_FROM_WISHLIST':
+                    this.AddToWishlist(userId, product);
+                    break;
+                case 'ADD_TO_CART':
+                    this.ManageCart(userId, product, qty, false);
+                    break;
+                case 'REMOVE_FROM_CART':
+                    this.ManageCart(userId, product, qty, true);
+                    break;
+                case 'CREATE_ORDER':
+                    this.ManageOrder(userId, order);
+                    break;
+                case 'TEST':
+                    console.log('Subscriber working');
+                    break;
+                default:
+                    break;
+            }
+        } catch (err) {
+            console.error('[CustomerService] Failed to process subscribed message:', err, 'payload:', payload);
+            // swallow error so the consumer doesn't crash the service
         }
 
     }

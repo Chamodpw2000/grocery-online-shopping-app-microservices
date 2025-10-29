@@ -77,8 +77,11 @@ module.exports = (app, channel) => {
 
 
             // PublishCustomerEvent(data);
-
-            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            if (!data || data.error) {
+                console.warn('[Products API] Not publishing malformed payload to CUSTOMER:', data);
+            } else {
+                PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            }
 
             return res.status(200).json(data.data.product);
 
@@ -100,7 +103,11 @@ module.exports = (app, channel) => {
 
             const { data } = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
             // PublishCustomerEvent(data);
-            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            if (!data || data.error) {
+                console.warn('[Products API] Not publishing malformed payload to CUSTOMER:', data);
+            } else {
+                PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            }
             return res.status(200).json(data.data.product);
         } catch (err) {
             next(err)
@@ -125,7 +132,11 @@ module.exports = (app, channel) => {
 
 
             // PublishShoppingEvent(data);
-            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            if (!data || data.error) {
+                console.warn('[Products API] Not publishing malformed payload to CUSTOMER:', data);
+            } else {
+                PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            }
             // PublishCustomerEvent(data);
             PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
 
@@ -153,8 +164,12 @@ module.exports = (app, channel) => {
             const { data } = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_CART');
             // PublishShoppingEvent(data);
             // PublishShoppingEvent(data);
-            PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
-            PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            if (!data || data.error) {
+                console.warn('[Products API] Not publishing malformed payload to SHOPPING/CUSTOMER:', data);
+            } else {
+                PublishMessage(channel, SHOPPING_BINDING_KEY, JSON.stringify(data));
+                PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
+            }
 
 
             const response = { product: data.data.product, unit: data.data.qty };

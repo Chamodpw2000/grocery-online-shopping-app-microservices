@@ -61,20 +61,38 @@ class ShoppingService {
 
 
   async SubscribeEvents(payload) {
-    payload = JSON.parse(payload);
-    const { event, data } = payload;
-    const { userId, product, qty } = data;
+    try {
+      // payload may arrive as a string or already-parsed object
+      const parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;
 
-    switch (event) {
-      case 'ADD_TO_CART':
-        this.ManageCart(userId, product, qty, false);
-        break;
-      case 'REMOVE_FROM_CART':
-        this.ManageCart(userId, product, qty, true);
-        break;
-      default:
-        break;
+      // validate shape
+      if (!parsed || typeof parsed !== 'object') {
+        console.warn('[ShoppingService] Ignoring non-object payload:', payload);
+        return;
+      }
 
+      const { event, data } = parsed;
+
+      if (!event || !data || typeof data !== 'object') {
+        console.warn('[ShoppingService] Ignoring message without event/data:', parsed);
+        return;
+      }
+
+      const { userId, product, qty } = data;
+
+      switch (event) {
+        case 'ADD_TO_CART':
+          this.ManageCart(userId, product, qty, false);
+          break;
+        case 'REMOVE_FROM_CART':
+          this.ManageCart(userId, product, qty, true);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error('[ShoppingService] Failed to process subscribed message:', err, 'payload:', payload);
+      // swallow error so the consumer doesn't crash the service
     }
   }
 
