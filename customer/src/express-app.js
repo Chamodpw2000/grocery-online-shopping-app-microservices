@@ -5,7 +5,7 @@ const HandleErrors = require('./utils/error-handler');
 const appEvents = require('./api/app-events');
 
 
-module.exports = async (app) => {
+module.exports = async (app , channel) => {
 
     app.use(express.json({ limit: '1mb'}));
     app.use(express.urlencoded({ extended: true, limit: '1mb'}));
@@ -15,7 +15,7 @@ module.exports = async (app) => {
     appEvents(app);
 
     //api
-    customer(app);
+    customer(app , channel);
 
 
     // error handling
